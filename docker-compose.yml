@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  database:
+    container_name: container-dealchat-backend
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dealchat-db
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: container-dealchat-rabbitmq
+    hostname: container-dealchat
+    restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: myuser
+      RABBITMQ_DEFAULT_PASS: mypassword
