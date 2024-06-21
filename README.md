@@ -1,7 +1,7 @@
 POST  http://localhost:3000/auth/register
 
 {
-  "email": "user3@example.com",
+  "email": "user1@example.com",
   "password": "password123"
 }
 
@@ -16,13 +16,13 @@ POST http://localhost:3000/chat/conversation    (pour l'instant il faut créer u
 
 =====================================================================================================================================
 
-POST  http://localhost:3000/chat/send
+POST  http://localhost:3000/chat/send   (Créer 2 utilisateurs au minimum et adapter les ids)
 
 {
   "content": "Hello, how are you?",
   "senderId": 1,
   "recipientId": 2,
-  "conversationId": 5
+  "conversationId": 1
 }
 
 =====================================================================================================================================

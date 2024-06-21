@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  async getMessages(userId: number) {
-    console.log(`Fetching messages for userId (type: ${typeof userId}): ${userId}`);
+  async getMessages(Id: string) {
+    console.log(`Fetching messages for userId (type: ${typeof Id}): ${Id}`);
     return this.prisma.message.findMany({
       where: {
-        OR: [
-          { senderId: userId },
-          { recipientId: userId },
-        ],
+        OR: [{ senderId: Id }, { recipientId: Id }],
       },
       include: {
         sender: true,
@@ -22,13 +19,34 @@ export class ChatService {
     });
   }
 
-  async sendMessage(content: string, senderId: number, recipientId: number, conversationId: number) {
-    console.log('sendMessage called with:', { content, senderId, recipientId, conversationId });
+  async sendMessage(content: string, senderId: string, recipientId: string) {
+    console.log('sendMessage called with:', { content, senderId, recipientId });
+
     try {
-      const conversation = await this.prisma.conversation.findUnique({ where: { id: conversationId } });
+      let conversation = await this.prisma.conversation.findFirst({
+        where: {
+          AND: [
+            { users: { some: { userId: senderId } } },
+            { users: { some: { userId: recipientId } } },
+          ],
+        },
+      });
+
       if (!conversation) {
-        console.error(`Conversation with id ${conversationId} not found`);
-        throw new Error(`Conversation with id ${conversationId} not found`);
+        conversation = await this.prisma.conversation.create({
+          data: {
+            users: {
+              create: [{ userId: senderId }, { userId: recipientId }],
+            },
+          },
+        });
+        console.log('Conversation created successfully:', conversation);
+      } else {
+        conversation = await this.prisma.conversation.update({
+          where: { id: conversation.id },
+          data: { updatedAt: new Date() },
+        });
+        console.log('Conversation updated successfully:', conversation);
       }
 
       const message = await this.prisma.message.create({
@@ -41,7 +59,7 @@ export class ChatService {
             connect: { id: recipientId },
           },
           conversation: {
-            connect: { id: conversationId },
+            connect: { id: conversation.id },
           },
         },
       });
@@ -50,37 +68,6 @@ export class ChatService {
     } catch (error) {
       console.error('Error creating message:', error);
       throw new Error('Error creating message');
-    }
-  }
-
-  async createConversation(userIds: number[]) {
-    console.log('createConversation called with:', userIds);
-    try {
-      // Vérifiez l'existence des utilisateurs
-      const users = await this.prisma.user.findMany({
-        where: { id: { in: userIds } }
-      });
-      console.log('Found users:', users);
-
-      if (users.length !== userIds.length) {
-        throw new Error('One or more users not found');
-      }
-
-      // Créez la conversation et connectez les utilisateurs
-      const conversation = await this.prisma.conversation.create({
-        data: {
-          users: {
-            create: userIds.map(userId => ({
-              user: { connect: { id: userId } },
-            })),
-          },
-        },
-      });
-      console.log('Conversation created successfully:', conversation);
-      return conversation;
-    } catch (error) {
-      console.error('Error creating conversation:', error);
-      throw new Error('Error creating conversation');
     }
   }
 }

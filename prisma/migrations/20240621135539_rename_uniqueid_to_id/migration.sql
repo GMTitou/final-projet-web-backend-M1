@@ -1,7 +1,6 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
-    "uniqueId" TEXT NOT NULL,
+    "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
 
@@ -12,8 +11,8 @@ CREATE TABLE "User" (
 CREATE TABLE "Message" (
     "id" SERIAL NOT NULL,
     "content" TEXT NOT NULL,
-    "senderId" INTEGER NOT NULL,
-    "recipientId" INTEGER NOT NULL,
+    "senderId" TEXT NOT NULL,
+    "recipientId" TEXT NOT NULL,
     "conversationId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
@@ -33,14 +32,14 @@ CREATE TABLE "Conversation" (
 -- CreateTable
 CREATE TABLE "ConversationUser" (
     "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
     "conversationId" INTEGER NOT NULL,
 
     CONSTRAINT "ConversationUser_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_uniqueId_key" ON "User"("uniqueId");
+CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");

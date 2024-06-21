@@ -5,16 +5,19 @@ import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private userService: UserService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+  ) {}
 
   async register(body: any) {
-    const uniqueId = this.userService.generateUniqueId(6);
+    const id = this.userService.generateUniqueId(6);
     const { email, password } = body;
     const hashedPassword = await bcrypt.hash(password, 10);
     try {
       const user = await this.prisma.user.create({
         data: {
-          uniqueId: uniqueId,
+          id: id,
           email,
           password: hashedPassword,
         },
@@ -26,7 +29,7 @@ export class AuthService {
     }
   }
 
-  async login(body: any) {
-    const { email, password } = body;
-  }
+  // async login(body: any) {
+  //   const { email, password } = body;
+  // }
 }

@@ -8,20 +8,19 @@ generator client {
 }
 
 model User {
-  id                Int                @id @default(autoincrement())
-  uniqueId          String             @unique
-  email             String             @unique
-  password          String
-  messagesSent      Message[]          @relation("messagesSent")
-  messagesReceived  Message[]          @relation("messagesReceived")
-  conversations     ConversationUser[]
+  id               String             @id @unique
+  email            String             @unique
+  password         String
+  messagesSent     Message[]          @relation("messagesSent")
+  messagesReceived Message[]          @relation("messagesReceived")
+  conversations    ConversationUser[]
 }
 
 model Message {
   id             Int          @id @default(autoincrement())
   content        String
-  senderId       Int
-  recipientId    Int
+  senderId       String
+  recipientId    String
   conversationId Int
   createdAt      DateTime?    @default(now())
   updatedAt      DateTime?    @default(now()) @updatedAt
@@ -31,19 +30,19 @@ model Message {
 }
 
 model Conversation {
-  id             Int               @id @default(autoincrement())
-  createdAt      DateTime?         @default(now())
-  updatedAt      DateTime?         @default(now()) @updatedAt
-  users          ConversationUser[]
-  messages       Message[]
+  id        Int                @id @default(autoincrement())
+  createdAt DateTime?          @default(now())
+  updatedAt DateTime?          @default(now()) @updatedAt
+  users     ConversationUser[]
+  messages  Message[]
 }
 
 model ConversationUser {
-  id             Int           @id @default(autoincrement())
-  userId         Int
+  id             Int          @id @default(autoincrement())
+  userId         String
   conversationId Int
-  user           User          @relation(fields: [userId], references: [id])
-  conversation   Conversation  @relation(fields: [conversationId], references: [id])
-  
+  user           User         @relation(fields: [userId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
   @@unique([userId, conversationId])
 }
