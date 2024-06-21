@@ -1,19 +1,24 @@
-import { Controller, Get, Post, Body, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
 import { ChatService } from './chat.service';
 
 @Controller('chat')
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private chatService: ChatService) {}
 
   @Get('messages/:userId')
-  getMessages(@Request() req) {
-    const userId = parseInt(req.params.userId, 10);
+  async getMessages(@Param('userId', ParseIntPipe) userId: number) {
     return this.chatService.getMessages(userId);
   }
 
   @Post('send')
-  sendMessage(@Body() body) {
-    const { content, senderId, recipientId } = body;
-    return this.chatService.sendMessage(content, senderId, recipientId);
+  async sendMessage(@Body() body: { content: string, senderId: number, recipientId: number, conversationId: number }) {
+    const { content, senderId, recipientId, conversationId } = body;
+    return this.chatService.sendMessage(content, senderId, recipientId, conversationId);
+  }
+
+  @Post('conversation')
+  async createConversation(@Body() body: { userIds: number[] }) {
+    const { userIds } = body;
+    return this.chatService.createConversation(userIds);
   }
 }

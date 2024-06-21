@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './user/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { ChatModule } from './chat/chat.module';
 
