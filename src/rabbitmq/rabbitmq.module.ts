@@ -1,6 +1,9 @@
+// rabbitmq.module.ts
 import { Module } from '@nestjs/common';
-import { ChatService } from './chat.service';
-import { ChatController } from './chat.controller';
+import { RabbitmqService } from './rabbitmq.service';
+import { RabbitmqController } from './rabbitmq.controller';
+import { RabbitmqProducer } from './rabbitmq.producer';
+import { RabbitmqConsumer } from './rabbitmq.consumer';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrismaModule } from 'prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -26,7 +29,7 @@ import { JwtModule } from '@nestjs/jwt';
       },
     ]),
   ],
-  providers: [ChatService],
-  controllers: [ChatController],
+  providers: [RabbitmqService, RabbitmqProducer],
+  controllers: [RabbitmqController, RabbitmqConsumer],
 })
-export class ChatModule {}
+export class RabbitmqModule {}

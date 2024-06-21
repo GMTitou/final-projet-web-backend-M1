@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { RabbitmqProducer } from './rabbitmq.producer';
 
 @Injectable()
-export class ChatService {
-  constructor(private prisma: PrismaService) {}
+export class RabbitmqService {
+  constructor(
+    private prisma: PrismaService,
+    private readonly rabbitmqProducer: RabbitmqProducer,
+  ) {}
 
   async getMessages(Id: string) {
     console.log(`Fetching messages for userId (type: ${typeof Id}): ${Id}`);
@@ -64,6 +68,9 @@ export class ChatService {
         },
       });
       console.log('Message created successfully:', message);
+
+      await this.rabbitmqProducer.sendMessage(message);
+
       return message;
     } catch (error) {
       console.error('Error creating message:', error);
