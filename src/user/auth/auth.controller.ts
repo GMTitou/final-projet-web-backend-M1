@@ -13,15 +13,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() body: any) {
-    try {
       return await this.authService.register(body);
-    } catch (error) {
-      console.error('Error registering user:', error);
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
   }
 
   // @Post('login')
