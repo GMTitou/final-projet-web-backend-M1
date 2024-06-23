@@ -4,8 +4,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthModule } from './user/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { ChatModule } from './chat/chat.module';
+import { AppController } from './app.controller';
+import { UserModule } from './user/user.module';
 
 @Module({
+  controllers: [AppController],
   imports: [
     ConfigModule.forRoot(),
     PrismaModule,
@@ -24,6 +27,7 @@ import { ChatModule } from './chat/chat.module';
     ]),
     AuthModule,
     ChatModule,
+    UserModule, // Add UserModule here
   ],
 })
 export class AppModule {}
