@@ -1,19 +1,23 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
   HttpException,
   HttpStatus,
-  Get,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { UserService } from '../user.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('register')
   async register(@Body() body: any) {
@@ -59,9 +63,17 @@ export class AuthController {
 
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
-  getProfile(@Req() req) {
+  async getProfile(@Req() req) {
     try {
-      return req.user;
+      const user = req.user;
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Exclude password from the user object without assigning it
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: _, ...userWithoutPassword } = user;
+      return userWithoutPassword;
     } catch (error) {
       console.error('Error fetching user profile:', error);
       throw new HttpException(

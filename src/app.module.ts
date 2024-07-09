@@ -5,10 +5,12 @@ import { AuthModule } from './user/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
+import { AppService } from './app.service'; // Import AppService
 import { UserModule } from './user/user.module';
 
 @Module({
   controllers: [AppController],
+  providers: [AppService], // Provide AppService here
   imports: [
     ConfigModule.forRoot(),
     PrismaModule,
@@ -27,7 +29,7 @@ import { UserModule } from './user/user.module';
     ]),
     AuthModule,
     ChatModule,
-    UserModule, // Add UserModule here
+    UserModule,
   ],
 })
 export class AppModule {}

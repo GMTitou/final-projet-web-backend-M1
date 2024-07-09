@@ -6,13 +6,12 @@ export class ChatService {
   constructor(private prisma: PrismaService) {}
 
   async getMessages(userId: number) {
-    console.log(`Fetching messages for userId (type: ${typeof userId}): ${userId}`);
+    console.log(
+      `Fetching messages for userId (type: ${typeof userId}): ${userId}`,
+    );
     return this.prisma.message.findMany({
       where: {
-        OR: [
-          { senderId: userId },
-          { recipientId: userId },
-        ],
+        OR: [{ senderId: userId }, { recipientId: userId }],
       },
       include: {
         sender: true,
@@ -22,10 +21,22 @@ export class ChatService {
     });
   }
 
-  async sendMessage(content: string, senderId: number, recipientId: number, conversationId: number) {
-    console.log('sendMessage called with:', { content, senderId, recipientId, conversationId });
+  async sendMessage(
+    content: string,
+    senderId: number,
+    recipientId: number,
+    conversationId: number,
+  ) {
+    console.log('sendMessage called with:', {
+      content,
+      senderId,
+      recipientId,
+      conversationId,
+    });
     try {
-      const conversation = await this.prisma.conversation.findUnique({ where: { id: conversationId } });
+      const conversation = await this.prisma.conversation.findUnique({
+        where: { id: conversationId },
+      });
       if (!conversation) {
         console.error(`Conversation with id ${conversationId} not found`);
         throw new Error(`Conversation with id ${conversationId} not found`);
@@ -58,7 +69,7 @@ export class ChatService {
     try {
       // Vérifiez l'existence des utilisateurs
       const users = await this.prisma.user.findMany({
-        where: { id: { in: userIds } }
+        where: { id: { in: userIds } },
       });
       console.log('Found users:', users);
 
@@ -70,7 +81,7 @@ export class ChatService {
       const conversation = await this.prisma.conversation.create({
         data: {
           users: {
-            create: userIds.map(userId => ({
+            create: userIds.map((userId) => ({
               user: { connect: { id: userId } },
             })),
           },
