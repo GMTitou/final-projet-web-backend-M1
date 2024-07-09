@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthModule } from './user/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
-import { ChatModule } from './chat/chat.module';
+import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { ChatModule } from './chat/chat.module';
       },
     ]),
     AuthModule,
-    ChatModule,
+    RabbitmqModule,
   ],
 })
 export class AppModule {}
