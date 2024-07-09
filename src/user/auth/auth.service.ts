@@ -13,6 +13,15 @@ export class AuthService {
   async register(body: any) {
     const id = this.userService.generateUniqueId(6);
     const { email, password } = body;
+
+    if (!this.userService.isValidEmail(email)) {
+      throw new Error('Invalid email format');
+    }
+
+    if (!this.userService.isValidPassword(password)) {
+      throw new Error('Password does not meet the security criteria');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     try {
       const user = await this.prisma.user.create({
