@@ -11,7 +11,9 @@ export class RabbitmqController {
   }
 
   @Post('send')
-  async sendMessage(@Body() body: { content: string; senderId: string; recipientId: string }) {
+  async sendMessage(
+    @Body() body: { content: string; senderId: string; recipientId: string },
+  ) {
     const { content, senderId, recipientId } = body;
     return this.rabbitmqService.sendMessage(content, senderId, recipientId);
   }
