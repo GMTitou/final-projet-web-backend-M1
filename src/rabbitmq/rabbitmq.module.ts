@@ -9,6 +9,11 @@ import { ConnectionService } from './connection/connection.service';
 import { ConnectionsController } from './connection/connection.controller';
 import { UserService } from 'src/user/user.service';
 
+const rabbitmqUrl =
+  process.env.NODE_ENV === 'production'
+    ? 'amqp://myuser:mypassword@rabbitmq:5672'
+    : 'amqp://myuser:mypassword@localhost:5672';
+
 @Module({
   imports: [
     PrismaModule,
@@ -21,7 +26,7 @@ import { UserService } from 'src/user/user.service';
         name: 'CHAT_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://myuser:mypassword@localhost:5672'],
+          urls: [rabbitmqUrl],
           queue: 'chat_queue',
           queueOptions: {
             durable: false,
