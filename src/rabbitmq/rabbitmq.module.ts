@@ -42,6 +42,6 @@ const rabbitmqUrl =
     UserService,
   ],
   controllers: [RabbitmqController, ConnectionsController],
-  exports: [RabbitmqProducer],
+  exports: [RabbitmqProducer, ConnectionService],
 })
 export class RabbitmqModule {}

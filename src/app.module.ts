@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './user/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
+import { MyWebSocketGateway } from './socket/socket.gateway';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
     RabbitmqModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [MyWebSocketGateway],
   exports: [], 
 })
 export class AppModule {}
