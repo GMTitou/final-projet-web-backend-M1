@@ -15,12 +15,16 @@ export class AuthService {
 
   async register(body: any) {
     const id = this.userService.generateUniqueId(6);
-    const { email, password } = body;
+    const { email, password, nom, prenom } = body;
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(body);
+    
     try {
       const user = await this.prisma.user.create({
         data: {
           id,
+          nom: nom,
+          prenom,
           email,
           password: hashedPassword,
         },
