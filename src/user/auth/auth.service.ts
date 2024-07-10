@@ -17,9 +17,22 @@ export class AuthService {
     const id = this.userService.generateUniqueId(6);
     const { email, password, nom, prenom } = body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(body);
-    
+
     try {
+      if (!email || !this.userService.isValidEmail(email)) {
+        throw new Error('Invalid email');
+      }
+      if (!password || !this.userService.isValidPassword(password)) {
+        throw new Error('Invalid password');
+      }
+      if (!nom || !prenom) {
+        throw new Error('Invalid name');
+      }
+      const existingUser = await this.userService.findUserByEmail(email);
+      if (existingUser) {
+        throw new Error('Email already exists');
+      }
+
       const user = await this.prisma.user.create({
         data: {
           id,
@@ -29,7 +42,10 @@ export class AuthService {
           password: hashedPassword,
         },
       });
-      return this.generateToken(user);
+      const access_token = this.generateToken(user);
+      console.log('User created successfully:', { ...user, ...access_token });
+
+      return { userId: user.id, access_token };
     } catch (error) {
       console.error('Error creating user:', error);
       throw new Error('Error creating user');
