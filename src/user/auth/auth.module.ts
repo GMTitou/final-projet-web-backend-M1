@@ -25,7 +25,7 @@ import { RabbitmqModule } from 'src/rabbitmq/rabbitmq.module';
     }),
     ConfigModule,
     UserModule,
-    RabbitmqModule
+    RabbitmqModule,
   ],
   providers: [AuthService, Auth0Strategy, JwtStrategy],
   controllers: [AuthController],

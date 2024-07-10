@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+//import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthModule } from './user/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
@@ -11,6 +11,7 @@ import * as process from 'node:process';
 import { join } from 'path';
 import { UserResolver } from './user/resolvers/user.resolver';
 import { PubSub } from 'graphql-subscriptions';
+import { WebSocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PubSub } from 'graphql-subscriptions';
     PrismaModule,
     AuthModule,
     RabbitmqModule,
+    WebSocketModule,
     UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
