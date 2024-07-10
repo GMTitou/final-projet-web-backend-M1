@@ -1,4 +1,3 @@
-// rabbitmq.module.ts
 import { Module } from '@nestjs/common';
 import { RabbitmqService } from './rabbitmq.service';
 import { RabbitmqController } from './rabbitmq.controller';
@@ -7,10 +6,14 @@ import { RabbitmqConsumer } from './rabbitmq.consumer';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrismaModule } from 'prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
+import { MessageResolver } from './resolvers/message.resolver';
+import { PubSub } from 'graphql-subscriptions';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     PrismaModule,
+    ConfigModule,
     JwtModule.register({
       secret: 'your_jwt_secret',
       signOptions: { expiresIn: '60m' },
@@ -29,7 +32,16 @@ import { JwtModule } from '@nestjs/jwt';
       },
     ]),
   ],
-  providers: [RabbitmqService, RabbitmqProducer],
+  providers: [
+    RabbitmqService,
+    RabbitmqProducer,
+    MessageResolver,
+    {
+      provide: 'PUB_SUB',
+      useValue: new PubSub(),
+    },
+  ],
   controllers: [RabbitmqController, RabbitmqConsumer],
+  exports: [RabbitmqService],
 })
 export class RabbitmqModule {}

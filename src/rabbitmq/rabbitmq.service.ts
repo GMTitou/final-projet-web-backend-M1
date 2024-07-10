@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RabbitmqProducer } from './rabbitmq.producer';
+import { Message } from '@prisma/client';
 
 @Injectable()
 export class RabbitmqService {
@@ -9,12 +10,21 @@ export class RabbitmqService {
     private readonly rabbitmqProducer: RabbitmqProducer,
   ) {}
 
-  async getMessages(Id: string) {
-    console.log(`Fetching messages for userId (type: ${typeof Id}): ${Id}`);
+  async getMessages(Id?: string): Promise<Message[]> {
+    if (Id) {
+      console.log(`Fetching messages for userId (type: ${typeof Id}): ${Id}`);
+      return this.prisma.message.findMany({
+        where: {
+          OR: [{ senderId: Id }, { recipientId: Id }],
+        },
+        include: {
+          sender: true,
+          recipient: true,
+          conversation: true,
+        },
+      });
+    }
     return this.prisma.message.findMany({
-      where: {
-        OR: [{ senderId: Id }, { recipientId: Id }],
-      },
       include: {
         sender: true,
         recipient: true,
@@ -23,7 +33,11 @@ export class RabbitmqService {
     });
   }
 
-  async sendMessage(content: string, senderId: string, recipientId: string) {
+  async sendMessage(
+    content: string,
+    senderId: string,
+    recipientId: string,
+  ): Promise<Message> {
     console.log('sendMessage called with:', { content, senderId, recipientId });
 
     try {
@@ -65,6 +79,11 @@ export class RabbitmqService {
           conversation: {
             connect: { id: conversation.id },
           },
+        },
+        include: {
+          sender: true,
+          recipient: true,
+          conversation: true,
         },
       });
       console.log('Message created successfully:', message);

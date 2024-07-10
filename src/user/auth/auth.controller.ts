@@ -24,16 +24,16 @@ export class AuthController {
     }
   }
 
-  // @Post('login')
-  // async login(@Body() body: any) {
-  //   try {
-  //     return await this.authService.login(body);
-  //   } catch (error) {
-  //     console.error('Error logging in user:', error);
-  //     throw new HttpException(
-  //       'Internal Server Error',
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+  @Post('login')
+  async login(@Body() body: any) {
+    try {
+      return await this.authService.login(body);
+    } catch (error) {
+      console.error('Error logging in user:', error);
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

@@ -4,26 +4,32 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthModule } from './user/auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { UserModule } from './user/user.module';
+import * as process from 'node:process';
+import { join } from 'path';
+import { UserResolver } from './user/resolvers/user.resolver';
+import { PubSub } from 'graphql-subscriptions';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     PrismaModule,
-    ClientsModule.register([
-      {
-        name: 'RABBITMQ_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://myuser:mypassword@localhost:5672'],
-          queue: 'main_queue',
-          queueOptions: {
-            durable: false,
-          },
-        },
-      },
-    ]),
     AuthModule,
     RabbitmqModule,
+    UserModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    }),
+  ],
+  providers: [
+    UserResolver,
+    {
+      provide: 'PUB_SUB',
+      useValue: new PubSub(),
+    },
   ],
 })
 export class AppModule {}
