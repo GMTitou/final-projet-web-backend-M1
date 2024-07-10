@@ -1,6 +1,6 @@
 import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ConnectionService} from './connection/connection.service';
+import { ConnectionService } from './connection/connection.service';
 import { UserService } from 'src/user/user.service';
 import { connect, Connection, Channel } from 'amqplib';
 import { ConfigService } from '@nestjs/config';
@@ -16,7 +16,6 @@ export class RabbitmqProducer implements OnModuleInit {
   constructor(
     @Inject('CHAT_SERVICE') private readonly client: ClientProxy,
     private readonly connectionService: ConnectionService,
-<<<<<<< HEAD
     private readonly userService: UserService,
     private configService: ConfigService,
   ) {
@@ -29,10 +28,6 @@ export class RabbitmqProducer implements OnModuleInit {
   async onModuleInit() {
     await this.connect();
   }
-=======
-    private readonly userService: UserService, // Injectez votre UserService ici
-  ) {}
->>>>>>> 5f8eedf76d2ed7b03ad7e4394fdbf2ee572c922f
 
   async connect() {
     try {
@@ -63,8 +58,8 @@ export class RabbitmqProducer implements OnModuleInit {
 
     const eventData = {
       userId: user.id,
-      lastName: user.lastName,
-      firstName: user.firstName,
+      nom: user.lastName,
+      prenom: user.firstName,
     };
 
     this.client.emit('user_connected', { userId });
@@ -79,8 +74,8 @@ export class RabbitmqProducer implements OnModuleInit {
 
     const eventData = {
       userId: user.id,
-      lastName: user.lastName,
-      firstName: user.firstName,
+      nom: user.lastName,
+      prenom: user.firstName,
     };
 
     this.client.emit('user_disconnected', { userId });

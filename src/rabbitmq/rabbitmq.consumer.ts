@@ -10,7 +10,7 @@ export class RabbitmqConsumer {
   async handleMessage(@Payload() message: any) {
     console.log(`Received message: ${JSON.stringify(message)}`);
   }
-  
+
   @EventPattern('user_connected')
   handleUserConnected(@Payload() data: { userId: string }) {
     this.connectionService.addConnectedUser(data.userId);

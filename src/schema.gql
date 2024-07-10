@@ -40,8 +40,8 @@ type User {
   id: String!
   email: String!
   password: String!
-  nom: String!
-  prenom: String!
+  lastName: String!
+  firstName: String!
   messagesSent: [Message!]
   messagesReceived: [Message!]
   conversations: [ConversationUser!]
@@ -60,18 +60,19 @@ type Mutation {
 }
 
 input CreateUserDto {
-  nom: String
-  prenom: String
+  uniqueId: String
+  lastName: String
+  firstName: String
   email: String
   password: String
 }
 
 input UpdateUserDto {
+  uniqueId: String
+  lastName: String
+  firstName: String
   email: String
   password: String
-  nom: String
-  prenom: String
-  uniqueId: String
 }
 
 type Subscription {

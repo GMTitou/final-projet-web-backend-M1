@@ -14,10 +14,10 @@ export class User {
   password: string;
 
   @Field()
-  nom: string;
+  lastName: string;
 
   @Field()
-  prenom: string;
+  firstName: string;
 
   @Field(() => [Message], { nullable: true })
   messagesSent?: Message[];
