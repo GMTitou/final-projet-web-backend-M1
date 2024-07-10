@@ -16,6 +16,7 @@ export class RabbitmqProducer implements OnModuleInit {
   constructor(
     @Inject('CHAT_SERVICE') private readonly client: ClientProxy,
     private readonly connectionService: ConnectionService,
+<<<<<<< HEAD
     private readonly userService: UserService,
     private configService: ConfigService,
   ) {
@@ -28,6 +29,10 @@ export class RabbitmqProducer implements OnModuleInit {
   async onModuleInit() {
     await this.connect();
   }
+=======
+    private readonly userService: UserService, // Injectez votre UserService ici
+  ) {}
+>>>>>>> 5f8eedf76d2ed7b03ad7e4394fdbf2ee572c922f
 
   async connect() {
     try {
@@ -58,8 +63,8 @@ export class RabbitmqProducer implements OnModuleInit {
 
     const eventData = {
       userId: user.id,
-      nom: user.nom,
-      prenom: user.prenom,
+      lastName: user.lastName,
+      firstName: user.firstName,
     };
 
     this.client.emit('user_connected', { userId });
@@ -74,8 +79,8 @@ export class RabbitmqProducer implements OnModuleInit {
 
     const eventData = {
       userId: user.id,
-      nom: user.nom,
-      prenom: user.prenom,
+      lastName: user.lastName,
+      firstName: user.firstName,
     };
 
     this.client.emit('user_disconnected', { userId });
