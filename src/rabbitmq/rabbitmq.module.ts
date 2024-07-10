@@ -1,4 +1,3 @@
-// rabbitmq.module.ts
 import { Module } from '@nestjs/common';
 import { RabbitmqService } from './rabbitmq.service';
 import { RabbitmqController } from './rabbitmq.controller';
@@ -7,6 +6,11 @@ import { RabbitmqConsumer } from './rabbitmq.consumer';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrismaModule } from 'prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
+
+const rabbitmqUrl =
+  process.env.NODE_ENV === 'production'
+    ? 'amqp://myuser:mypassword@rabbitmq:5672'
+    : 'amqp://myuser:mypassword@localhost:5672';
 
 @Module({
   imports: [
@@ -20,7 +24,7 @@ import { JwtModule } from '@nestjs/jwt';
         name: 'CHAT_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://myuser:mypassword@localhost:5672'],
+          urls: [rabbitmqUrl],
           queue: 'chat_queue',
           queueOptions: {
             durable: false,

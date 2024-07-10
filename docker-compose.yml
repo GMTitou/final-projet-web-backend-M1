@@ -6,7 +6,7 @@ services:
     image: postgres:latest
     restart: unless-stopped
     ports:
-      - 5432:5432
+      - '5432:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -15,11 +15,11 @@ services:
   rabbitmq:
     image: rabbitmq:management
     container_name: container-dealchat-rabbitmq
-    hostname: container-dealchat
+    hostname: rabbitmq
     restart: unless-stopped
     ports:
-      - 5672:5672
-      - 15672:15672
+      - '5672:5672'
+      - '15672:15672'
     environment:
       RABBITMQ_DEFAULT_USER: myuser
       RABBITMQ_DEFAULT_PASS: mypassword
@@ -28,14 +28,16 @@ services:
     build: .
     container_name: container-dealchat-app
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@database:5432/dealchat-db
-      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
-      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
-      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
-      - AUTH0_CALLBACK_URL=${AUTH0_CALLBACK_URL}
-      - JWT_SECRET=${JWT_SECRET}
+      NODE_ENV: production  # Assurez-vous que cette ligne est présente
+      DATABASE_URL: postgresql://postgres:postgres@database:5432/dealchat-db
+#      RABBITMQ_URL: amqp://myuser:mypassword@localhost:5672
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET}
+      AUTH0_CALLBACK_URL: ${AUTH0_CALLBACK_URL}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - database
       - rabbitmq
