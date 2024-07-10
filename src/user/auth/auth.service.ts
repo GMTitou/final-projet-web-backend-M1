@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
+import { RabbitmqProducer } from 'src/rabbitmq/rabbitmq.producer';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,7 @@ export class AuthService {
     private prisma: PrismaService,
     private userService: UserService,
     private jwtService: JwtService,
+    private rabbitmqProducer: RabbitmqProducer,
   ) {}
 
   async register(body: any) {
@@ -53,16 +55,29 @@ export class AuthService {
   }
 
   async login(body: any) {
-    const { email, password } = body;
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+    try {
+      const { email, password } = body;
+      const user = await this.prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        throw new Error('Invalid credentials');
+      }
+      const access_token = this.generateToken(user);
+      await this.rabbitmqProducer.userConnected(user.id);
+
+      console.log('User logged in successfully:', {
+        userId: user.id,
+        ...access_token,
+      });
+
+      return { userId: user.id, ...access_token };
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw new Error('Error logging in');
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-    return this.generateToken(user);
   }
 
   async validateUser(id: string, email?: string): Promise<User | null> {

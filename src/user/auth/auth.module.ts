@@ -8,6 +8,8 @@ import { JwtStrategy } from './jwt.strategy';
 import { PrismaModule } from 'prisma/prisma.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from '../user.module';
+import { RabbitmqProducer } from 'src/rabbitmq/rabbitmq.producer';
+import { RabbitmqModule } from 'src/rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import { UserModule } from '../user.module';
     }),
     ConfigModule,
     UserModule,
+    RabbitmqModule
   ],
   providers: [AuthService, Auth0Strategy, JwtStrategy],
   controllers: [AuthController],

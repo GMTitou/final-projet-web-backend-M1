@@ -1,12 +1,13 @@
-// rabbitmq.module.ts
 import { Module } from '@nestjs/common';
 import { RabbitmqService } from './rabbitmq.service';
 import { RabbitmqController } from './rabbitmq.controller';
 import { RabbitmqProducer } from './rabbitmq.producer';
-import { RabbitmqConsumer } from './rabbitmq.consumer';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrismaModule } from 'prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ConnectionService } from './connection/connection.service';
+import { ConnectionsController } from './connection/connection.controller';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -29,7 +30,13 @@ import { JwtModule } from '@nestjs/jwt';
       },
     ]),
   ],
-  providers: [RabbitmqService, RabbitmqProducer],
-  controllers: [RabbitmqController, RabbitmqConsumer],
+  providers: [
+    RabbitmqService,
+    RabbitmqProducer,
+    ConnectionService,
+    UserService,
+  ],
+  controllers: [RabbitmqController, ConnectionsController],
+  exports: [RabbitmqProducer],
 })
 export class RabbitmqModule {}
