@@ -23,7 +23,7 @@ const rabbitmqUrl =
     }),
     ClientsModule.register([
       {
-        name: 'CHAT_SERVICE',
+        lastName: 'CHAT_SERVICE',
         transport: Transport.RMQ,
         options: {
           urls: [rabbitmqUrl],

@@ -9,7 +9,6 @@ export class RabbitmqProducer {
     @Inject('CHAT_SERVICE') private readonly client: ClientProxy,
     private readonly connectionService: ConnectionService,
     private readonly userService: UserService, // Injectez votre UserService ici
-
   ) {}
 
   async sendMessage(message: any): Promise<void> {
@@ -26,11 +25,11 @@ export class RabbitmqProducer {
     if (!user) {
       throw new Error(`User with id ${userId} not found`);
     }
-    
+
     const eventData = {
       userId: user.id,
-      nom: user.nom,
-      prenom: user.prenom,
+      lastName: user.lastName,
+      firstName: user.firstName,
     };
 
     this.client.emit('user_connected', { userId });
@@ -38,15 +37,15 @@ export class RabbitmqProducer {
   }
 
   async userDisconnected(userId: string) {
-    const user = await this.userService.findUserById(userId); // Utilisez votre UserService pour trouver l'utilisateur
+    const user = await this.userService.findUserById(userId);
     if (!user) {
       throw new Error(`User with id ${userId} not found`);
     }
-    
+
     const eventData = {
       userId: user.id,
-      nom: user.nom,
-      prenom: user.prenom,
+      lastName: user.lastName,
+      firstName: user.firstName,
     };
 
     this.client.emit('user_disconnected', { userId });
