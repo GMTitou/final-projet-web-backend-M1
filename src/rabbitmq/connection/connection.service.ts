@@ -2,17 +2,19 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ConnectionService {
-  private connectedUsers: Set<string> = new Set();
+  private connectedUsers: any[] = [];
 
-  addConnectedUser(eventData: any) {
-    this.connectedUsers.add(eventData);
+  addConnectedUser(user: any) {
+    this.connectedUsers.push(user);
   }
 
-  removeConnectedUser(eventData: any) {
-    this.connectedUsers.delete(eventData);
+  removeConnectedUser(user: any) {
+    this.connectedUsers = this.connectedUsers.filter(
+      (u) => u.userId !== user.userId,
+    );
   }
 
-  getConnectedUsers(): string[] {
-    return Array.from(this.connectedUsers);
+  getConnectedUsers() {
+    return this.connectedUsers;
   }
 }

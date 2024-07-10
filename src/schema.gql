@@ -1,0 +1,79 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ConversationUser {
+  id: Float!
+  userId: String!
+  conversationId: Float!
+  user: User!
+  conversation: Conversation!
+}
+
+type Conversation {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  users: [ConversationUser!]!
+  messages: [Message!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Message {
+  id: Float!
+  content: String!
+  senderId: String!
+  recipientId: String!
+  conversationId: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  sender: User
+  recipient: User
+  conversation: Conversation
+}
+
+type User {
+  id: String!
+  email: String!
+  password: String!
+  nom: String!
+  prenom: String!
+  messagesSent: [Message!]
+  messagesReceived: [Message!]
+  conversations: [ConversationUser!]
+}
+
+type Query {
+  users: [User!]!
+  user(id: String!): User!
+  messages: [Message!]!
+}
+
+type Mutation {
+  createUser(createUserDto: CreateUserDto!): User!
+  updateUser(id: String!, updateUserDto: UpdateUserDto!): User!
+  sendMessage(content: String!, senderId: String!, recipientId: String!): Message!
+}
+
+input CreateUserDto {
+  nom: String
+  prenom: String
+  email: String
+  password: String
+}
+
+input UpdateUserDto {
+  email: String
+  password: String
+  nom: String
+  prenom: String
+  uniqueId: String
+}
+
+type Subscription {
+  messageSent: Message!
+}

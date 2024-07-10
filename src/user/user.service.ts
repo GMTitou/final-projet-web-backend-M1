@@ -35,11 +35,24 @@ export class UserService {
   }
 
   async findAllUsers(): Promise<User[]> {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      include: {
+        messagesSent: true,
+        messagesReceived: true,
+        conversations: true,
+      },
+    });
   }
 
   async findUserById(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        messagesSent: true,
+        messagesReceived: true,
+        conversations: true,
+      },
+    });
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
@@ -50,6 +63,11 @@ export class UserService {
     return this.prisma.user.update({
       where: { id },
       data,
+      include: {
+        messagesSent: true,
+        messagesReceived: true,
+        conversations: true,
+      },
     });
   }
 }

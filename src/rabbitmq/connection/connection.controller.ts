@@ -6,7 +6,7 @@ export class ConnectionsController {
   constructor(private readonly connectionService: ConnectionService) {}
 
   @Get()
-  getConnectedUsers() {    
+  getConnectedUsers() {
     return this.connectionService.getConnectedUsers();
   }
 }
