@@ -17,7 +17,7 @@ export class AuthService {
 
   async register(body: any) {
     const id = this.userService.generateUniqueId(6);
-    const { email, password, nom, prenom } = body;
+    const { email, password, lastName, firstName } = body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
@@ -27,7 +27,7 @@ export class AuthService {
       if (!password || !this.userService.isValidPassword(password)) {
         throw new Error('Invalid password');
       }
-      if (!nom || !prenom) {
+      if (!lastName || !firstName) {
         throw new Error('Invalid name');
       }
       const existingUser = await this.userService.findUserByEmail(email);
@@ -38,8 +38,8 @@ export class AuthService {
       const user = await this.prisma.user.create({
         data: {
           id,
-          nom: nom,
-          prenom,
+          lastName: lastName,
+          firstName,
           email,
           password: hashedPassword,
         },

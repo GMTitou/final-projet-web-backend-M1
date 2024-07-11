@@ -9,8 +9,8 @@ generator client {
 
 model User {
   id               String             @id @unique
-  nom              String
-  prenom           String
+  lastName         String
+  firstName        String
   email            String             @unique
   password         String
   messagesSent     Message[]          @relation("messagesSent")

@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RabbitmqProducer } from './rabbitmq.producer';
 import { Prisma } from '@prisma/client';
+import { RabbitmqConsumer } from './rabbitmq.consumer';
+import { SocketService } from 'src/socket/socket.gateway';
 
 @Injectable()
 export class RabbitmqService {
@@ -10,24 +12,43 @@ export class RabbitmqService {
   constructor(
     private prisma: PrismaService,
     private readonly rabbitmqProducer: RabbitmqProducer,
-  ) {}
+    private readonly socketService: SocketService  ) {}
 
-  async getMessages(Id: string) {
-    this.logger.log(`Fetching messages for userId (type: ${typeof Id}): ${Id}`);
+  getMessages(rabbitmqMessages:any) {
     try {
-      return await this.prisma.message.findMany({
-        where: {
-          OR: [{ senderId: Id }, { recipientId: Id }],
-        },
-        include: {
-          sender: true,
-          recipient: true,
-          conversation: true,
-        },
-      });
+      // Récupérer les messages de Prisma
+      // const prismaMessages = await this.prisma.message.findMany({
+      //   where: {
+      //     OR: [{ senderId }, { recipientId }],
+      //   },
+      //   include: {
+      //     sender: true,
+      //     recipient: true,
+      //     conversation: true,
+      //   },
+      // });
+
+      // Récupérer les nouveaux messages de RabbitMQ
+      // const rabbitmqMessages = await this.rabbitmqConsumer.handleMessage();
+      console.log('message',rabbitmqMessages);
+      this.socketService.getIO().emit('message_sent', rabbitmqMessages); // Émettre vers Socket.IO
+
+
+      // Fusionner les messages si nécessaire
+      // const mergedMessages = [...prismaMessages, ...rabbitmqMessages];
+
+      // // Trier les messages par date si nécessaire
+      // mergedMessages.sort((a, b) => {
+      //   const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      //   const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      //   return dateA - dateB;
+      // });
+  
+
+      return rabbitmqMessages;
     } catch (error) {
-      this.logger.error('Error fetching messages:', error);
-      throw new Error('Error fetching messages');
+      this.logger.error('Error fetching and merging messages:', error);
+      throw new Error('Error fetching and merging messages');
     }
   }
 
@@ -45,6 +66,17 @@ export class RabbitmqService {
 
     try {
       const transaction = await this.prisma.$transaction(async (prisma) => {
+        const sender = await prisma.user.findUnique({
+          where: { id: senderId },
+        });
+        const recipient = await prisma.user.findUnique({
+          where: { id: recipientId },
+        });
+
+        if (!sender || !recipient) {
+          throw new Error('Sender or recipient not found');
+        }
+
         let conversation = await prisma.conversation.findFirst({
           where: {
             AND: [

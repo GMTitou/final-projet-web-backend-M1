@@ -1,13 +1,24 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { RabbitmqService } from './rabbitmq.service';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('chat')
 export class RabbitmqController {
+  private messagesFromRMQ: any[] = []; // To store received messages
+
   constructor(private rabbitmqService: RabbitmqService) {}
 
-  @Get('messages/:id')
-  async getMessages(@Param('id') userId: string) {
-    return this.rabbitmqService.getMessages(userId);
+  @MessagePattern('message_sent')
+  handleMessage(@Payload() data: any) {
+    this.messagesFromRMQ.push(data);
+  }
+
+  @Get('messages/:senderId/:recipientId')
+  async getMessages(
+    @Param('senderId') senderId: string,
+    @Param('recipientId') recipientId: string,
+  ) {
+    return this.rabbitmqService.getMessages(this.messagesFromRMQ);
   }
 
   @Post('send')

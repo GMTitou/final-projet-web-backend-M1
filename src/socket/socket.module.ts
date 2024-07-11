@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MyWebSocketGateway } from './socket.gateway';
+import { SocketService } from './socket.gateway';
 
 @Module({
-  providers: [MyWebSocketGateway],
+  providers: [SocketService],
 })
 export class EventsModule {}

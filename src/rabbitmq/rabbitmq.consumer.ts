@@ -1,16 +1,21 @@
-import { Controller } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { Controller, Injectable } from '@nestjs/common';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  Ctx,
+  EventPattern,
+  MessagePattern,
+  Payload,
+  RmqContext,
+  Transport,
+} from '@nestjs/microservices';
 import { ConnectionService } from './connection/connection.service';
+import { RabbitmqService } from './rabbitmq.service';
 
 @Controller()
 export class RabbitmqConsumer {
-  constructor(private readonly connectionService: ConnectionService) {}
+  private readonly connectionService: ConnectionService;
 
-  @EventPattern('message_sent')
-  async handleMessage(@Payload() message: any) {
-    console.log(`Received message: ${JSON.stringify(message)}`);
-  }
-  
   @EventPattern('user_connected')
   handleUserConnected(@Payload() data: { userId: string }) {
     this.connectionService.addConnectedUser(data.userId);

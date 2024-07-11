@@ -28,7 +28,9 @@ export class UserService {
     return passwordRegex.test(password);
   }
 
-  async createUser(data: CreateUserDto & { id: string }): Promise<User> {
+  async createUser(
+    data: CreateUserDto & { id: string; lastName: string; firstName: string },
+  ): Promise<User> {
     return this.prisma.user.create({
       data,
     });

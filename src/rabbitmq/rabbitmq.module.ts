@@ -8,6 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConnectionService } from './connection/connection.service';
 import { ConnectionsController } from './connection/connection.controller';
 import { UserService } from 'src/user/user.service';
+import { RabbitmqConsumer } from './rabbitmq.consumer';
+import { SocketService } from 'src/socket/socket.gateway';
 
 const rabbitmqUrl =
   process.env.NODE_ENV === 'production'
@@ -40,6 +42,8 @@ const rabbitmqUrl =
     RabbitmqProducer,
     ConnectionService,
     UserService,
+    RabbitmqConsumer,
+    SocketService
   ],
   controllers: [RabbitmqController, ConnectionsController],
   exports: [RabbitmqProducer, ConnectionService],

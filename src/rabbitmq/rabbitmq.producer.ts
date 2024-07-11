@@ -13,12 +13,13 @@ export class RabbitmqProducer {
   ) {}
 
   async sendMessage(message: any): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.client.emit('message_sent', message).subscribe({
-        next: () => resolve(),
-        error: (err) => reject(err),
-      });
-    });
+    try {
+      await this.client.emit('message_sent', message).toPromise();
+      console.log('Message sent successfully:', message);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      throw new Error('Failed to send message');
+    }
   }
 
   async userConnected(userId: string) {
@@ -29,8 +30,8 @@ export class RabbitmqProducer {
     
     const eventData = {
       userId: user.id,
-      nom: user.nom,
-      prenom: user.prenom,
+      lastName: user.lastName,
+      firstName: user.firstName,
     };
 
     this.client.emit('user_connected', { userId });
@@ -45,8 +46,8 @@ export class RabbitmqProducer {
     
     const eventData = {
       userId: user.id,
-      nom: user.nom,
-      prenom: user.prenom,
+      lastName: user.lastName,
+      firstName: user.firstName,
     };
 
     this.client.emit('user_disconnected', { userId });
