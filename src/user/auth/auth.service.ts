@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { UserService } from 'src/user/user.service';
-import { RabbitmqProducer } from 'src/rabbitmq/rabbitmq.producer';
+import { UserService } from '../user.service';
+import { RabbitmqProducer } from '../../rabbitmq/rabbitmq.producer';
 
 @Injectable()
 export class AuthService {

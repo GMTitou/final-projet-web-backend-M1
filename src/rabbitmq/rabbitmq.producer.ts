@@ -1,7 +1,7 @@
 import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ConnectionService } from './connection/connection.service';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { connect, Connection, Channel } from 'amqplib';
 import { ConfigService } from '@nestjs/config';
 
