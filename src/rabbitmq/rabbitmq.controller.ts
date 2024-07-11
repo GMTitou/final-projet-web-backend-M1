@@ -4,7 +4,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('chat')
 export class RabbitmqController {
-  private messagesFromRMQ: any[] = []; // To store received messages
+  private messagesFromRMQ: any[] = []; 
 
   constructor(private rabbitmqService: RabbitmqService) {}
 
@@ -15,10 +15,10 @@ export class RabbitmqController {
 
   @Get('messages/:senderId/:recipientId')
   async getMessages(
-    @Param('senderId') senderId: string,
-    @Param('recipientId') recipientId: string,
+    // @Param('senderId') senderId: string,
+    // @Param('recipientId') recipientId: string,
   ) {
-    return this.rabbitmqService.getMessages(this.messagesFromRMQ);
+    return this.messagesFromRMQ;
   }
 
   @Post('send')

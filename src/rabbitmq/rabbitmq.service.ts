@@ -4,48 +4,37 @@ import { RabbitmqProducer } from './rabbitmq.producer';
 import { Prisma } from '@prisma/client';
 import { RabbitmqConsumer } from './rabbitmq.consumer';
 import { SocketService } from 'src/socket/socket.gateway';
+import { WebSocketServer } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
 @Injectable()
 export class RabbitmqService {
+  @WebSocketServer() server: Server;
+
   private readonly logger = new Logger(RabbitmqService.name);
 
   constructor(
     private prisma: PrismaService,
     private readonly rabbitmqProducer: RabbitmqProducer,
-    private readonly socketService: SocketService  ) {}
+    private readonly socketService: SocketService,
+  ) {}
 
-  getMessages(rabbitmqMessages:any) {
+  async getMessages(rabbitmqMessages: any, senderId: string, recipientId: string) {
     try {
-      // Récupérer les messages de Prisma
-      // const prismaMessages = await this.prisma.message.findMany({
-      //   where: {
-      //     OR: [{ senderId }, { recipientId }],
-      //   },
-      //   include: {
-      //     sender: true,
-      //     recipient: true,
-      //     conversation: true,
-      //   },
-      // });
-
-      // Récupérer les nouveaux messages de RabbitMQ
-      // const rabbitmqMessages = await this.rabbitmqConsumer.handleMessage();
-      console.log('message',rabbitmqMessages);
-      this.socketService.getIO().emit('message_sent', rabbitmqMessages); // Émettre vers Socket.IO
-
-
-      // Fusionner les messages si nécessaire
-      // const mergedMessages = [...prismaMessages, ...rabbitmqMessages];
-
-      // // Trier les messages par date si nécessaire
-      // mergedMessages.sort((a, b) => {
-      //   const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      //   const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      //   return dateA - dateB;
-      // });
   
+      const prismaMessages = await this.prisma.message.findMany({
+        where: {
+          OR: [{ senderId }, { recipientId }],
+        },
+        include: {
+          sender: true,
+          recipient: true,
+          conversation: true,
+        },
+      });
 
-      return rabbitmqMessages;
+
+      return prismaMessages;
     } catch (error) {
       this.logger.error('Error fetching and merging messages:', error);
       throw new Error('Error fetching and merging messages');
@@ -69,6 +58,7 @@ export class RabbitmqService {
         const sender = await prisma.user.findUnique({
           where: { id: senderId },
         });
+        
         const recipient = await prisma.user.findUnique({
           where: { id: recipientId },
         });
