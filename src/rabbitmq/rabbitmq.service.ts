@@ -2,10 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RabbitmqProducer } from './rabbitmq.producer';
 import { Prisma } from '@prisma/client';
-import { RabbitmqConsumer } from './rabbitmq.consumer';
 import { SocketService } from 'src/socket/socket.gateway';
 import { WebSocketServer } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 
 @Injectable()
 export class RabbitmqService {
@@ -16,7 +15,6 @@ export class RabbitmqService {
   constructor(
     private prisma: PrismaService,
     private readonly rabbitmqProducer: RabbitmqProducer,
-    private readonly socketService: SocketService,
   ) {}
 
   async getMessages(rabbitmqMessages: any, senderId: string, recipientId: string) {

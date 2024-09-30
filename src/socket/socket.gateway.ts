@@ -8,7 +8,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ConnectionService } from '../rabbitmq/connection/connection.service';
 import { RabbitmqProducer } from '../rabbitmq/rabbitmq.producer';
-import { Injectable } from '@nestjs/common';
 
 interface User {
   userId: string;

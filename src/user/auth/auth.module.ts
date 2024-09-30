@@ -8,7 +8,6 @@ import { JwtStrategy } from './jwt.strategy';
 import { PrismaModule } from 'prisma/prisma.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from '../user.module';
-import { RabbitmqProducer } from 'src/rabbitmq/rabbitmq.producer';
 import { RabbitmqModule } from 'src/rabbitmq/rabbitmq.module';
 
 @Module({

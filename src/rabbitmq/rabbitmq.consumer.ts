@@ -1,16 +1,9 @@
 import { Controller, Injectable } from '@nestjs/common';
 import {
-  ClientProxy,
-  ClientProxyFactory,
-  Ctx,
   EventPattern,
-  MessagePattern,
   Payload,
-  RmqContext,
-  Transport,
 } from '@nestjs/microservices';
 import { ConnectionService } from './connection/connection.service';
-import { RabbitmqService } from './rabbitmq.service';
 
 @Controller()
 export class RabbitmqConsumer {
